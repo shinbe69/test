@@ -1,0 +1,53 @@
+{
+  "name": "job-board-api",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Job board API for onboarding project",
+  "scripts": {
+    "test": "xo && ./node_modules/mocha/bin/mocha",
+    "test:watch": "xo && ./node_modules/mocha/bin/mocha --watch",
+    "lint": "xo",
+    "format": "xo --fix",
+    "start": "node ./bin/start.js",
+    "dev": "nodemon ./bin/start.js",
+    "migrate": "node ./bin/migrate.js",
+    "migrate:create": "migrate create --migrations-dir='./src/migrations'"
+  },
+  "keywords": [
+    "express",
+    "postgres"
+  ],
+  "author": "Faba Technology",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "helmet": "^4.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "migrate": "^1.7.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.4.0",
+    "sql-template-strings": "^2.2.2",
+    "uuid": "^8.3.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.2.0",
+    "nodemon": "^2.0.4",
+    "xo": "^0.33.1"
+  },
+  "xo": {
+    "prettier": true,
+    "space": true,
+    "envs": [
+      "mocha"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabatek/onboarding-job-board-api.git"
+  }
+}
