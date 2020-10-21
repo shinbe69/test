@@ -6,11 +6,11 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: ec2-54-160-202-3.compute-1.amazonaws.com/d29ec3ti33hr5p
+      DATABASE_URL: jdbc:postgresql://ec2-54-160-202-3.compute-1.amazonaws.com:5432/d29ec3ti33hr5p
       NODE_ENV: development
-      PORT: 3000
+      PORT:
     ports:
-      - "3000:3000"
+      - ""
     command: npm run dev
     volumes:
       - .:/app/
