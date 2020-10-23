@@ -86,4 +86,21 @@ describe('/POST Post a new job', () => {
         });
     });
   });
+
+  describe('/DELETE Delete the job has just been create and updated', () => {
+    it('DELETE /api/jobs', (done) => {
+      chai
+        .request(app())
+        .delete('/api/jobs')
+        .set('Authorization', 'Bearer ' + accessToken)
+        .send({id})
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.body.should.have
+            .property('message')
+            .eql('Delete the job successful!');
+          done();
+        });
+    });
+  });
 });

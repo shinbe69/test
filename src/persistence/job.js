@@ -70,5 +70,16 @@ module.exports = {
     } catch (error) {
       throw error;
     }
+  },
+
+  async delete(id) {
+    try {
+      const {rows} = await db.query(sql`
+        DELETE FROM jobs WHERE id = ${id}
+        `);
+      return rows;
+    } catch (error) {
+      throw error;
+    }
   }
 };

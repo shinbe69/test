@@ -80,4 +80,32 @@ router.put('/', async (request, response) => {
     response.status(500).json();
   }
 });
+
+router.delete('/', async (request, response) => {
+  try {
+    const {id} = request.body;
+    // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
+    const isJobExist = await Job.find(id);
+    if (!isJobExist) {
+      return response
+        .status(400)
+        .json({message: 'There is no job with this id!'});
+    }
+
+    const job = await Job.delete(id);
+    if (!job) {
+      return response.status(400).json({message: 'Delete job failed!'});
+    }
+
+    return response.status(200).json({
+      message: 'Delete the job successful!'
+    });
+  } catch (error) {
+    console.error(
+      `deleteJob({ title: ${request.body.title} }) >> Error: ${error.stack}`
+    );
+
+    response.status(500).json();
+  }
+});
 module.exports = router;
