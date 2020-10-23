@@ -12,6 +12,6 @@ router.use('/api/health', (request, response) => {
 });
 router.use('/api/users', user);
 router.use('/api/sessions', session);
-router.use('/api/job', job);
+router.use('/api/jobs', job);
 
 module.exports = router;

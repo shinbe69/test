@@ -6,7 +6,7 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://user:pass@postgres:5432/db
+      DATABASE_URL: jdbc:postgresql://ec2-54-160-202-3.compute-1.amazonaws.com:5432/d29ec3ti33hr5p
       NODE_ENV: development
       PORT: 3000
     ports:
@@ -24,6 +24,6 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: db
+      POSTGRES_USER: eczjhxppyvzedt
+      POSTGRES_PASSWORD: 5efa0e60cf6bac3f06b1cc3cb1bb3f9098e35dd44eae5314889a2dba65bf36f6
+      POSTGRES_DB: d29ec3ti33hr5p

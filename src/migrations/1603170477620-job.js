@@ -6,12 +6,12 @@ module.exports.up = async function (next) {
   await client.query(`CREATE TABLE IF NOT EXISTS jobs (
       id uuid PRIMARY KEY,
       title text,
-      salaryRange text,
+      salary_range text,
       description text,
-      createAt timestamp DEFAULT CURRENT_TIMESTAMP,
+      create_at timestamp DEFAULT CURRENT_TIMESTAMP,
       tags text[],
       company text,
-      logoURL text DEFAULT 'https://unsplash.com/photos/g2E2NQ5SWSU'
+      logo_url text DEFAULT 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80'
 );`);
 
   await client.release(true);
