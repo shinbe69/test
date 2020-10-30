@@ -50,5 +50,12 @@ module.exports = {
           RETURNING *;
         `);
     return rows[0];
+  },
+  async delete(id) {
+    const {rows} = await db.query(sql`
+        DELETE FROM jobs WHERE id = ${id}
+        RETURNING id;
+        `);
+    return rows[0];
   }
 };
