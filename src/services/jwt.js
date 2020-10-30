@@ -9,7 +9,8 @@ function jwt() {
     path: [
       // Public routes that don't require authentication
       '/api/sessions',
-      '/api/health'
+      '/api/health',
+      {url: '/api/jobs', methods: ['GET']}
     ]
   });
 }

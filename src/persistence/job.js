@@ -57,5 +57,11 @@ module.exports = {
         RETURNING id;
         `);
     return rows[0];
+  },
+  async get() {
+    const {rows} = await db.query(sql`
+        SELECT * FROM jobs
+        `);
+    return rows;
   }
 };
