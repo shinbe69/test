@@ -74,7 +74,7 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
   });
 
   describe('/PUT Update the job', () => {
-    it('return status 200 and the latest job information when update successfully', (done) => {
+    it('return status 200 and the latest job information when update successfully!', (done) => {
       const jobParameters = {
         id: id[0],
         title: 'ChangeTitleToThisLine',
@@ -155,6 +155,7 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
           done();
         });
     });
+
     it('return status 400 when the job is not found!', (done) => {
       chai
         .request(app())
@@ -181,7 +182,7 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
           response.body.should.have
             .property('message')
             .eql('Get all jobs successful, list of jobs is below!');
-          expect(response.body.job).to.be.a.jsonObj();
+          expect(response.body.jobs).to.be.a.jsonObj();
           done();
         });
     });
@@ -194,6 +195,7 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
         `);
       if (!rows) {
         console.log('Delete test data failed!');
+        return false;
       }
     });
     console.log('Test data was deleted!');

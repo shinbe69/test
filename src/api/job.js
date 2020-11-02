@@ -115,14 +115,14 @@ router.delete('/', async (request, response) => {
 
 router.get('/', async (request, response) => {
   try {
-    const job = await Job.get();
-    if (!job) {
+    const jobs = await Job.get();
+    if (!jobs) {
       return response.status(400).json({message: 'Get all of jobs failed!'});
     }
 
     return response.status(200).json({
       message: 'Get all jobs successful, list of jobs is below!',
-      job
+      jobs
     });
   } catch (error) {
     console.error(`getJob() >> Error: ${error.stack}`);
