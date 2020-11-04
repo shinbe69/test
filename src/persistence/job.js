@@ -63,5 +63,13 @@ module.exports = {
         SELECT * FROM jobs
         `);
     return rows;
+  },
+  async paginationGet(offset, limit) {
+    const checkedOffset = offset || 0;
+    const checkedLimit = limit || 10;
+    const {rows} = await db.query(sql`
+        SELECT * FROM jobs OFFSET ${checkedOffset} LIMIT ${checkedLimit}
+        `);
+    return {jobs: rows, checkedOffset};
   }
 };

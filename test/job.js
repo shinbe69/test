@@ -30,20 +30,22 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
         accessToken = response.body.token;
         done();
       });
-    const jobParameters = {
-      title: 'Test',
-      salaryRange: '$450-$700',
-      description: 'Work with customers and dev team',
-      tags: ['English', 'Communicate', 'Technical knowledge'],
-      company: 'Faba',
-      logoURL:
-        'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80'
-    };
-    id.push(uuidv4());
-    db.query(sql`
+    for (let i = 0; i < 12; i++) {
+      const jobParameters = {
+        title: i,
+        salaryRange: '$450-$700',
+        description: 'Work with customers and dev team',
+        tags: ['English', 'Communicate', 'Technical knowledge'],
+        company: 'Faba',
+        logoURL:
+          'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80'
+      };
+      id.push(uuidv4());
+      db.query(sql`
         INSERT INTO jobs
-        VALUES (${id[0]}, ${jobParameters.title}, ${jobParameters.salaryRange}, ${jobParameters.description}, current_date, ${jobParameters.tags}, ${jobParameters.company}, ${jobParameters.logoURL})
+        VALUES (${id[i]}, ${jobParameters.title}, ${jobParameters.salaryRange}, ${jobParameters.description}, current_date, ${jobParameters.tags}, ${jobParameters.company}, ${jobParameters.logoURL})
         `);
+    }
   });
 
   describe('/POST Post a new job', () => {
@@ -181,8 +183,170 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
           response.should.have.status(200);
           response.body.should.have
             .property('message')
-            .eql('Get all jobs successful, list of jobs is below!');
-          expect(response.body.jobs).to.be.a.jsonObj();
+            .eql(
+              'Get all jobs successful, list of jobs is below! There is / are ' +
+                response.body.jobs.length +
+                ' in total!'
+            );
+          for (let i = 0; i < response.body.jobs.length; i++) {
+            expect(response.body.jobs[i]).to.be.a.jsonObj();
+            response.body.jobs[i].should.have.property('id');
+            response.body.jobs[i].should.have.property('title');
+            response.body.jobs[i].should.have.property('salary_range');
+            response.body.jobs[i].should.have.property('description');
+            response.body.jobs[i].should.have.property('create_at');
+            response.body.jobs[i].should.have.property('tags');
+            expect(Array.isArray(response.body.jobs[i].tags)).to.deep.equal(
+              true
+            );
+            response.body.jobs[i].should.have.property('company');
+            response.body.jobs[i].should.have.property('logo_url');
+          }
+
+          done();
+        });
+    });
+    it('return status 200 and a list all of jobs paginated according to offset and limit parameters when get the jobs successful!', (done) => {
+      const offset = 1;
+      const limit = 5;
+      chai
+        .request(app())
+        .get('/api/jobs/pagination?offset=' + offset + '&limit=' + limit)
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.body.should.have
+            .property('message')
+            .eql(
+              'Get list of jobs paginated successful, the list is below! There is / are ' +
+                response.body.result.jobs.length +
+                ' in total!'
+            );
+          expect(response.body.result.jobs.length).to.deep.equal(limit);
+          expect(
+            Number.parseInt(response.body.result.checkedOffset, 10)
+          ).to.deep.equal(offset);
+          for (let i = 0; i < response.body.result.jobs.length; i++) {
+            expect(response.body.result.jobs[i]).to.be.a.jsonObj();
+            response.body.result.jobs[i].should.have.property('id');
+            response.body.result.jobs[i].should.have.property('title');
+            response.body.result.jobs[i].should.have.property('salary_range');
+            response.body.result.jobs[i].should.have.property('description');
+            response.body.result.jobs[i].should.have.property('create_at');
+            response.body.result.jobs[i].should.have.property('tags');
+            expect(
+              Array.isArray(response.body.result.jobs[i].tags)
+            ).to.deep.equal(true);
+            response.body.result.jobs[i].should.have.property('company');
+            response.body.result.jobs[i].should.have.property('logo_url');
+          }
+
+          done();
+        });
+    });
+    it('return status 200 and a list all of jobs paginated according to default offset and limit parameters in case both are not set when get the jobs successful!', (done) => {
+      chai
+        .request(app())
+        .get('/api/jobs/pagination')
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.body.should.have
+            .property('message')
+            .eql(
+              'Get list of jobs paginated successful, the list is below! There is / are ' +
+                response.body.result.jobs.length +
+                ' in total!'
+            );
+          expect(response.body.result.jobs.length).to.deep.equal(10);
+          expect(
+            Number.parseInt(response.body.result.checkedOffset, 10)
+          ).to.deep.equal(0);
+          for (let i = 0; i < response.body.result.jobs.length; i++) {
+            expect(response.body.result.jobs[i]).to.be.a.jsonObj();
+            response.body.result.jobs[i].should.have.property('id');
+            response.body.result.jobs[i].should.have.property('title');
+            response.body.result.jobs[i].should.have.property('salary_range');
+            response.body.result.jobs[i].should.have.property('description');
+            response.body.result.jobs[i].should.have.property('create_at');
+            response.body.result.jobs[i].should.have.property('tags');
+            expect(
+              Array.isArray(response.body.result.jobs[i].tags)
+            ).to.deep.equal(true);
+            response.body.result.jobs[i].should.have.property('company');
+            response.body.result.jobs[i].should.have.property('logo_url');
+          }
+
+          done();
+        });
+    });
+    it('return status 200 and a list all of jobs paginated according to default offset parameters in case it is not set when get the jobs successful!', (done) => {
+      const limit = 5;
+      chai
+        .request(app())
+        .get('/api/jobs/pagination?&limit=' + limit)
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.body.should.have
+            .property('message')
+            .eql(
+              'Get list of jobs paginated successful, the list is below! There is / are ' +
+                response.body.result.jobs.length +
+                ' in total!'
+            );
+          expect(response.body.result.jobs.length).to.deep.equal(limit);
+          expect(
+            Number.parseInt(response.body.result.checkedOffset, 10)
+          ).to.deep.equal(0);
+          for (let i = 0; i < response.body.result.jobs.length; i++) {
+            expect(response.body.result.jobs[i]).to.be.a.jsonObj();
+            response.body.result.jobs[i].should.have.property('id');
+            response.body.result.jobs[i].should.have.property('title');
+            response.body.result.jobs[i].should.have.property('salary_range');
+            response.body.result.jobs[i].should.have.property('description');
+            response.body.result.jobs[i].should.have.property('create_at');
+            response.body.result.jobs[i].should.have.property('tags');
+            expect(
+              Array.isArray(response.body.result.jobs[i].tags)
+            ).to.deep.equal(true);
+            response.body.result.jobs[i].should.have.property('company');
+            response.body.result.jobs[i].should.have.property('logo_url');
+          }
+
+          done();
+        });
+    });
+    it('return status 200 and a list all of jobs paginated according default limit parameters in case it is not set when get the jobs successful!', (done) => {
+      const offset = 1;
+      chai
+        .request(app())
+        .get('/api/jobs/pagination?offset=' + offset)
+        .end((err, response) => {
+          response.should.have.status(200);
+          response.body.should.have
+            .property('message')
+            .eql(
+              'Get list of jobs paginated successful, the list is below! There is / are ' +
+                response.body.result.jobs.length +
+                ' in total!'
+            );
+          expect(response.body.result.jobs.length).to.deep.equal(10);
+          expect(
+            Number.parseInt(response.body.result.checkedOffset, 10)
+          ).to.deep.equal(offset);
+          for (let i = 0; i < response.body.result.jobs.length; i++) {
+            expect(response.body.result.jobs[i]).to.be.a.jsonObj();
+            response.body.result.jobs[i].should.have.property('id');
+            response.body.result.jobs[i].should.have.property('title');
+            response.body.result.jobs[i].should.have.property('salary_range');
+            response.body.result.jobs[i].should.have.property('description');
+            response.body.result.jobs[i].should.have.property('create_at');
+            response.body.result.jobs[i].should.have.property('tags');
+            expect(
+              Array.isArray(response.body.result.jobs[i].tags)
+            ).to.deep.equal(true);
+            response.body.result.jobs[i].should.have.property('company');
+            response.body.result.jobs[i].should.have.property('logo_url');
+          }
+
           done();
         });
     });
