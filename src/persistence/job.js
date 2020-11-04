@@ -22,31 +22,24 @@ module.exports = {
     return rows[0];
   },
   async update(job, jobParameters) {
-    const newTitle =
-      jobParameters.title.trim() === ''
-        ? job.title
-        : jobParameters.title.trim();
-    const newSalaryRange =
-      jobParameters.salaryRange.trim() === ''
-        ? job.salary_range
-        : jobParameters.salaryRange.trim();
-    const newDescription =
-      jobParameters.description.trim() === ''
-        ? job.description
-        : jobParameters.description.trim();
-    const newTags =
-      jobParameters.tags.length === 0 ? job.tags : jobParameters.tags;
-    const newCompany =
-      jobParameters.company.trim() === ''
-        ? job.company
-        : jobParameters.company.trim();
-    const newLogoURL =
-      jobParameters.logoURL.trim() === ''
-        ? job.logo_url
-        : jobParameters.logoURL.trim();
+    const newTitle = jobParameters.title
+      ? jobParameters.title.trim()
+      : job.title;
+    const newSalaryRange = jobParameters.salaryRange
+      ? jobParameters.salaryRange.trim()
+      : job.salary_range;
+    const newDescription = jobParameters.description
+      ? jobParameters.description.trim()
+      : job.description;
+    const newCompany = jobParameters.company
+      ? jobParameters.company.trim()
+      : job.company;
+    const newLogoURL = jobParameters.logoURL
+      ? jobParameters.logoURL.trim()
+      : job.logo_url;
 
     const {rows} = await db.query(sql`
-        UPDATE jobs SET title = ${newTitle}, salary_range = ${newSalaryRange}, description = ${newDescription}, tags = ${newTags}, company = ${newCompany}, logo_url = ${newLogoURL} WHERE id = ${job.id}
+        UPDATE jobs SET title = ${newTitle}, salary_range = ${newSalaryRange}, description = ${newDescription}, tags = ${jobParameters.tags}, company = ${newCompany}, logo_url = ${newLogoURL} WHERE id = ${job.id}
           RETURNING *;
         `);
     return rows[0];
@@ -58,7 +51,14 @@ module.exports = {
         `);
     return rows[0];
   },
-  async get(offset, limit) {
+  async get(id, offset, limit) {
+    if (id) {
+      const {rows} = await db.query(sql`
+        SELECT * FROM jobs WHERE id = ${id}
+        `);
+      return {jobs: rows};
+    }
+
     const checkedOffset = offset || 0;
     const checkedLimit = limit || 10;
     const {rows} = await db.query(sql`

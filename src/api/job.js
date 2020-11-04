@@ -55,11 +55,49 @@ router.post('/', async (request, response) => {
 router.put('/', async (request, response) => {
   try {
     const {id} = request.body;
+    if (!id) {
+      return response.status(400).json({message: 'ID must be provided!'});
+    }
+
     if (uuid.validate(id)) {
       // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
       let job = await Job.find(id);
       if (job) {
         const jobParameters = request.body;
+        if (
+          !jobParameters.title &&
+          !jobParameters.salaryRange &&
+          !jobParameters.description &&
+          !jobParameters.tags &&
+          !jobParameters.company &&
+          !jobParameters.logoURL
+        ) {
+          return response.status(400).json({
+            message: 'At least 1 one with different value must be provided!'
+          });
+        }
+
+        if (
+          jobParameters.title === job.title &&
+          jobParameters.salaryRange === job.salary_range &&
+          jobParameters.description === job.description &&
+          jobParameters.tags.length === job.tags.length &&
+          jobParameters.company === job.company &&
+          jobParameters.logoURL === job.logo_url
+        ) {
+          const count = 0;
+          jobParameters.tags.forEach(function (value, index, _) {
+            if (
+              jobParameters.tags[index] === job.tags[index] &&
+              count === jobParameters.tags.length - 1
+            ) {
+              return response.status(400).json({
+                message: 'At least 1 one with different value must be provided!'
+              });
+            }
+          });
+        }
+
         job = await Job.update(job, jobParameters);
         if (!job) {
           return response.status(400).json({message: 'Update job failed!'});
@@ -120,9 +158,10 @@ router.delete('/', async (request, response) => {
 
 router.get('/', async (request, response) => {
   try {
+    const id = request.query.id;
     const offset = request.query.offset;
     const limit = request.query.limit;
-    const result = await Job.get(offset, limit);
+    const result = await Job.get(id, offset, limit);
     if (!result) {
       return response
         .status(400)
