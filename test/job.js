@@ -184,23 +184,23 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
           response.body.should.have
             .property('message')
             .eql(
-              'Get all jobs successful, list of jobs is below! There is / are ' +
-                response.body.jobs.length +
+              'Get list of jobs paginated successful, the list is below! There is / are ' +
+                response.body.result.jobs.length +
                 ' in total!'
             );
-          for (let i = 0; i < response.body.jobs.length; i++) {
-            expect(response.body.jobs[i]).to.be.a.jsonObj();
-            response.body.jobs[i].should.have.property('id');
-            response.body.jobs[i].should.have.property('title');
-            response.body.jobs[i].should.have.property('salary_range');
-            response.body.jobs[i].should.have.property('description');
-            response.body.jobs[i].should.have.property('create_at');
-            response.body.jobs[i].should.have.property('tags');
-            expect(Array.isArray(response.body.jobs[i].tags)).to.deep.equal(
-              true
-            );
-            response.body.jobs[i].should.have.property('company');
-            response.body.jobs[i].should.have.property('logo_url');
+          for (let i = 0; i < response.body.result.jobs.length; i++) {
+            expect(response.body.result.jobs[i]).to.be.a.jsonObj();
+            response.body.result.jobs[i].should.have.property('id');
+            response.body.result.jobs[i].should.have.property('title');
+            response.body.result.jobs[i].should.have.property('salary_range');
+            response.body.result.jobs[i].should.have.property('description');
+            response.body.result.jobs[i].should.have.property('create_at');
+            response.body.result.jobs[i].should.have.property('tags');
+            expect(
+              Array.isArray(response.body.result.jobs[i].tags)
+            ).to.deep.equal(true);
+            response.body.result.jobs[i].should.have.property('company');
+            response.body.result.jobs[i].should.have.property('logo_url');
           }
 
           done();
@@ -211,7 +211,7 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
       const limit = 5;
       chai
         .request(app())
-        .get('/api/jobs/pagination?offset=' + offset + '&limit=' + limit)
+        .get('/api/jobs?offset=' + offset + '&limit=' + limit)
         .end((err, response) => {
           response.should.have.status(200);
           response.body.should.have
@@ -246,7 +246,7 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
     it('return status 200 and a list all of jobs paginated according to default offset and limit parameters in case both are not set when get the jobs successful!', (done) => {
       chai
         .request(app())
-        .get('/api/jobs/pagination')
+        .get('/api/jobs')
         .end((err, response) => {
           response.should.have.status(200);
           response.body.should.have
@@ -282,7 +282,7 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
       const limit = 5;
       chai
         .request(app())
-        .get('/api/jobs/pagination?&limit=' + limit)
+        .get('/api/jobs?&limit=' + limit)
         .end((err, response) => {
           response.should.have.status(200);
           response.body.should.have
@@ -318,7 +318,7 @@ describe('/CREATE, UPDATE, DELETE AND GET JOB', () => {
       const offset = 1;
       chai
         .request(app())
-        .get('/api/jobs/pagination?offset=' + offset)
+        .get('/api/jobs?offset=' + offset)
         .end((err, response) => {
           response.should.have.status(200);
           response.body.should.have

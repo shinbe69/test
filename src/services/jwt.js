@@ -10,8 +10,7 @@ function jwt() {
       // Public routes that don't require authentication
       '/api/sessions',
       '/api/health',
-      {url: '/api/jobs', methods: ['GET']},
-      {url: '/api/jobs/pagination', methods: ['GET']}
+      {url: '/api/jobs', methods: ['GET']}
     ]
   });
 }

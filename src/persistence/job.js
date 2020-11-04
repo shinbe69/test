@@ -58,13 +58,7 @@ module.exports = {
         `);
     return rows[0];
   },
-  async get() {
-    const {rows} = await db.query(sql`
-        SELECT * FROM jobs
-        `);
-    return rows;
-  },
-  async paginationGet(offset, limit) {
+  async get(offset, limit) {
     const checkedOffset = offset || 0;
     const checkedLimit = limit || 10;
     const {rows} = await db.query(sql`
